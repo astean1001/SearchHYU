@@ -1,11 +1,9 @@
 package kr.ac.hanyang.searchhyu.ui.main
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
@@ -36,13 +34,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         component.inject(this)
     }
+
+    override fun saveComponent(outState: Bundle) {
+        ComponentManager.saveComponent(component, outState)
+    }
     //endregion
 
     //region Activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
 
         initComponent(savedInstanceState)
         init()
@@ -86,11 +87,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
-        ComponentManager.saveComponent(component, outState)
     }
     //endregion
 
@@ -139,12 +135,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     .setAction("Action", null).show()
         }
 
-        val toggle = ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
+        searchView.attachNavigationDrawerToMenuButton(drawerLayout)
         navView.setNavigationItemSelectedListener(this)
     }
     //endregion
