@@ -29,3 +29,7 @@ Find Rest Area with Voice Recognition
 * **Guava**
   https://github.com/google/guava  
   Apache License 2.0  
+  
+* **PlanetxAndroidSDK**
+  https://github.com/skplanetx/planetx-android-sdk  
+  Apache License 2.0  

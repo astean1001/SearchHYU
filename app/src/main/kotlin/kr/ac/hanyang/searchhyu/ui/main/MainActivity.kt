@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kr.ac.hanyang.searchhyu.R
 import kr.ac.hanyang.searchhyu.common.util.ComponentManager
 import kr.ac.hanyang.searchhyu.ui.BaseActivity
@@ -137,6 +138,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         searchView.attachNavigationDrawerToMenuButton(drawerLayout)
         navView.setNavigationItemSelectedListener(this)
+
+        tMapView.setSKPMapApiKey(getString(R.string.app_key))
     }
     //endregion
 }
