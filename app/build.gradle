@@ -1,9 +1,22 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+buildscript {
+    ext.dagger_version = '2.6'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    }
+}
+
 android {
     compileSdkVersion 25
+    //noinspection GradleDependency
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "kr.ac.hanyang.searchhyu"
@@ -24,17 +37,38 @@ android {
     }
 }
 
+apt {
+    arguments {
+        androidManifestFile variant.outputs[0]?.processResources?.manifestFile
+        resourcePackageName android.defaultConfig.applicationId
+    }
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    testCompile 'junit:junit:4.12'
+
+    // Android
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
+
+    // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    // Floating search view
+    compile 'com.github.arimorty:floatingsearchview:2.0.4'
+
+    // Dagger2
+    compile "com.google.dagger:dagger:$dagger_version"
+    provided 'javax.annotation:jsr250-api:1.0'
+    apt "com.google.dagger:dagger-compiler:$dagger_version"
 }
+
 repositories {
     mavenCentral()
 }
