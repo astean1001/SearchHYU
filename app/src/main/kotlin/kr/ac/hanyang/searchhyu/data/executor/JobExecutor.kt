@@ -14,7 +14,7 @@ import javax.inject.Singleton
 @Singleton
 class JobExecutor @Inject constructor() : ThreadExecutor {
 
-    private val threadPoolExecutor : ThreadPoolExecutor =
+    private val threadPoolExecutor: ThreadPoolExecutor =
             ThreadPoolExecutor(3, 5, 10, TimeUnit.SECONDS, LinkedBlockingDeque(), JobFactory())
 
     override fun execute(command: Runnable) {
@@ -23,7 +23,7 @@ class JobExecutor @Inject constructor() : ThreadExecutor {
 }
 
 private class JobFactory : ThreadFactory {
-    private var counter : Int = 0
+    private var counter: Int = 0
 
     override fun newThread(r: Runnable): Thread {
         return Thread(r, "SearchHYU_" + counter++)

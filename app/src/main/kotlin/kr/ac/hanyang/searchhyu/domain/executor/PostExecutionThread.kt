@@ -6,5 +6,5 @@ import io.reactivex.Scheduler
  * Thread abstraction.
  */
 interface PostExecutionThread {
-    val scheduler : Scheduler
+    val scheduler: Scheduler
 }

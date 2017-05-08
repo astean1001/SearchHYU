@@ -10,7 +10,7 @@ import kr.ac.hanyang.searchhyu.domain.executor.PostExecutionThread
 import kr.ac.hanyang.searchhyu.domain.executor.ThreadExecutor
 
 abstract class UseCase<T, in Params>(val threadExecutor: ThreadExecutor,
-                                 val postExecutionThread: PostExecutionThread) {
+                                     val postExecutionThread: PostExecutionThread) {
 
     private var disposable: CompositeDisposable = CompositeDisposable()
 

@@ -14,19 +14,19 @@ class AppModule(private val app: MyApplication) {
 
     @Provides
     @Singleton
-    fun provideContext() : Context {
+    fun provideContext(): Context {
         return app
     }
 
     @Provides
     @Singleton
-    fun provideThreadExecutor(jobExecutor: JobExecutor) : ThreadExecutor {
+    fun provideThreadExecutor(jobExecutor: JobExecutor): ThreadExecutor {
         return jobExecutor
     }
 
     @Provides
     @Singleton
-    fun providePostExecutionThread(uiThread : UIThread) : PostExecutionThread {
+    fun providePostExecutionThread(uiThread: UIThread): PostExecutionThread {
         return uiThread
     }
 }
