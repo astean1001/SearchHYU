@@ -1,36 +1,63 @@
 package kr.ac.hanyang.searchhyu.ui.main
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kr.ac.hanyang.searchhyu.R
+import kr.ac.hanyang.searchhyu.common.util.ComponentManager
+import kr.ac.hanyang.searchhyu.ui.BaseActivity
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener,
+        MainContract.View {
 
+    @Inject
+    internal lateinit var presenter: MainContract.Presenter
+
+    private lateinit var component: MainComponent
+
+    //region BaseActivity
+    override fun initComponent(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
+            component = DaggerMainComponent.builder()
+                    .appComponent(appComponent)
+                    .mainPresenterModule(MainPresenterModule())
+                    .build()
+        } else {
+            component = ComponentManager.restoreComponent(savedInstanceState)
+        }
+
+        component.inject(this)
+    }
+    //endregion
+
+    //region Activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        initComponent(savedInstanceState)
+        init()
+    }
 
-        val toggle = ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+    override fun onResume() {
+        super.onResume()
+        presenter.bindView(this)
+        presenter.start()
+    }
 
-        navView.setNavigationItemSelectedListener(this)
+    override fun onStop() {
+        super.onStop()
+        presenter.unbindView()
+        presenter.stop()
     }
 
     override fun onBackPressed() {
@@ -61,6 +88,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        ComponentManager.saveComponent(component, outState)
+    }
+    //endregion
+
+    //region NavigationView.OnNavigationItemSelectedListener
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         val id = item.itemId
@@ -82,4 +116,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
+    //endregion
+
+    //region MainContract.View
+    override fun showProgress() {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun hideProgress() {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showError(e: Throwable) {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+    //endregion
+
+    //region Private methods
+    private fun init() {
+        fab.setOnClickListener { view ->
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+        }
+
+        val toggle = ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        navView.setNavigationItemSelectedListener(this)
+    }
+    //endregion
 }

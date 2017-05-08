@@ -25,3 +25,7 @@ Find Rest Area with Voice Recognition
   https://github.com/ReactiveX/RxAndroid  
   Copyright 2015 The RxAndroid authors  
   Apache License 2.0  
+  
+* **Guava**
+  https://github.com/google/guava  
+  Apache License 2.0  
