@@ -12,24 +12,24 @@ Find Rest Area with Voice Recognition
   Copyright (C) 2015 Ari C.  
   Apache License 2.0
   
-* **Dagger2**
+* **Dagger2**  
   https://github.com/google/dagger  
   Copyright 2012 The Dagger Authors  
   Apache License 2.0  
 
-* **RxKotlin**
+* **RxKotlin**  
   https://github.com/ReactiveX/RxKotlin  
   Apache License 2.0  
   
-* **RxAndroid**
+* **RxAndroid**  
   https://github.com/ReactiveX/RxAndroid  
   Copyright 2015 The RxAndroid authors  
   Apache License 2.0  
   
-* **Guava**
+* **Guava**  
   https://github.com/google/guava  
   Apache License 2.0  
   
-* **PlanetxAndroidSDK**
+* **PlanetxAndroidSDK**  
   https://github.com/skplanetx/planetx-android-sdk  
   Apache License 2.0  
