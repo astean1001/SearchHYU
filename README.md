@@ -16,3 +16,12 @@ Find Rest Area with Voice Recognition
   https://github.com/google/dagger  
   Copyright 2012 The Dagger Authors  
   Apache License 2.0  
+
+* **RxKotlin**
+  https://github.com/ReactiveX/RxKotlin  
+  Apache License 2.0  
+  
+* **RxAndroid**
+  https://github.com/ReactiveX/RxAndroid  
+  Copyright 2015 The RxAndroid authors  
+  Apache License 2.0  
