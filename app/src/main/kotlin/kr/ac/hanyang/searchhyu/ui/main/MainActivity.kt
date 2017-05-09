@@ -96,18 +96,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         // Handle navigation view item clicks here.
         val id = item.itemId
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        when (id) {
+            R.id.nav_navigation -> print("nav_navigation")
+            R.id.nav_rest_area_by_route -> print("nav_rest_area_by_route")
+            R.id.nav_theme_rest_area -> print("nav_theme_rest_area")
+            R.id.nav_notice -> print("nav_notice")
+            R.id.nav_settings -> print("nav_settings")
         }
 
         drawerLayout.closeDrawer(GravityCompat.START)
