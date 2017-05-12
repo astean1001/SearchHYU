@@ -15,9 +15,9 @@ object ComponentManager {
             .build<Long, Any>()
 
     @Suppress("UNCHECKED_CAST")
-    fun <C> restoreComponent(savedInstanceState: Bundle): C {
+    fun <C> restoreComponent(savedInstanceState: Bundle): C? {
         val componentId = savedInstanceState.getLong(COMPONENT_ID)
-        val component = components.getIfPresent(componentId) as C
+        val component = components.getIfPresent(componentId) as? C
         return component
     }
 

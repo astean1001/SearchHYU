@@ -14,30 +14,18 @@ import kr.ac.hanyang.searchhyu.common.util.ComponentManager
 import kr.ac.hanyang.searchhyu.ui.BaseActivity
 import javax.inject.Inject
 
-class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener,
+class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationItemSelectedListener,
         MainContract.View {
 
     @Inject
-    internal lateinit var presenter: MainContract.Presenter
-
-    private lateinit var component: MainComponent
+    lateinit var presenter: MainContract.Presenter
 
     //region BaseActivity
-    override fun initComponent(savedInstanceState: Bundle?) {
-        if (savedInstanceState == null) {
-            component = DaggerMainComponent.builder()
-                    .appComponent(appComponent)
-                    .mainPresenterModule(MainPresenterModule())
-                    .build()
-        } else {
-            component = ComponentManager.restoreComponent(savedInstanceState)
-        }
-
-        component.inject(this)
-    }
-
-    override fun saveComponent(outState: Bundle) {
-        ComponentManager.saveComponent(component, outState)
+    override fun createComponent(): MainComponent {
+        return DaggerMainComponent.builder()
+                .appComponent(appComponent)
+                .mainPresenterModule(MainPresenterModule())
+                .build()
     }
     //endregion
 
@@ -46,7 +34,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initComponent(savedInstanceState)
+        component.inject(this)
+
         init()
     }
 
