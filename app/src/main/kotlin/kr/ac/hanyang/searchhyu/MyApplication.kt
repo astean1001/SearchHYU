@@ -1,6 +1,7 @@
 package kr.ac.hanyang.searchhyu
 
 import android.app.Application
+import com.skp.Tmap.TMapTapi
 
 class MyApplication : Application() {
 
@@ -13,5 +14,7 @@ class MyApplication : Application() {
                 .builder()
                 .appModule(AppModule(this))
                 .build()
+
+        TMapTapi(this).setSKPMapAuthentication(getString(R.string.app_key))
     }
 }

@@ -5,5 +5,7 @@ import kr.ac.hanyang.searchhyu.ui.BaseView
 
 interface MainContract {
     interface Presenter : BasePresenter<View>
-    interface View : BaseView
+    interface View : BaseView {
+        fun requiredNetwork()
+    }
 }

@@ -2,15 +2,15 @@ package kr.ac.hanyang.searchhyu.ui.main
 
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.view.Menu
 import android.view.MenuItem
+import com.arlib.floatingsearchview.FloatingSearchView
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
 import kr.ac.hanyang.searchhyu.R
-import kr.ac.hanyang.searchhyu.common.util.ComponentManager
+import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
 import kr.ac.hanyang.searchhyu.ui.BaseActivity
 import javax.inject.Inject
 
@@ -99,30 +99,43 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
     //endregion
 
     //region MainContract.View
-    override fun showProgress() {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun showProgress() {}
 
-    override fun hideProgress() {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun hideProgress() {}
 
-    override fun showError(e: Throwable) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun showError(e: Throwable) {}
+
+    override fun requiredNetwork() {
+        ActivityUtils.showToast(this, R.string.required_network)
     }
     //endregion
 
     //region Private methods
     private fun init() {
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        fab.setOnClickListener {
+//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show()
+            ActivityUtils.moveToTmap(this)
         }
 
         searchView.attachNavigationDrawerToMenuButton(drawerLayout)
         navView.setNavigationItemSelectedListener(this)
 
-        tMapView.setSKPMapApiKey(getString(R.string.app_key))
+        searchView.setOnSearchListener(object : FloatingSearchView.OnSearchListener {
+            override fun onSearchAction(currentQuery: String?) {
+                search(currentQuery!!)
+            }
+
+            override fun onSuggestionClicked(searchSuggestion: SearchSuggestion?) {}
+        })
+
+        searchView.setOnMenuItemClickListener {
+            search(searchView.query)
+        }
+    }
+
+    private fun search(query: String) {
+        ActivityUtils.searchTmap(this, query)
     }
     //endregion
 }

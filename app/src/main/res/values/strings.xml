@@ -13,4 +13,7 @@
     <!-- action string -->
     <string name="action_settings">Settings</string>
     <string name="action_search">search</string>
+
+    <!-- network state message -->
+    <string name="required_network">네트워크 연결확인바람</string>
 </resources>

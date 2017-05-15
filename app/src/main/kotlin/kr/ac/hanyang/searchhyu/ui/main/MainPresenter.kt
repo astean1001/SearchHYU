@@ -1,8 +1,10 @@
 package kr.ac.hanyang.searchhyu.ui.main
 
+import android.content.Context
+import kr.ac.hanyang.searchhyu.common.util.NetworkUtils
 import javax.inject.Inject
 
-class MainPresenter @Inject constructor() : MainContract.Presenter {
+class MainPresenter @Inject constructor(val context: Context) : MainContract.Presenter {
     var view: MainContract.View? = null
 
     override fun bindView(view: MainContract.View) {
@@ -14,7 +16,9 @@ class MainPresenter @Inject constructor() : MainContract.Presenter {
     }
 
     override fun start() {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (!NetworkUtils.isConnected(context)) {
+            view?.requiredNetwork()
+        }
     }
 
     override fun stop() {
