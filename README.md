@@ -33,3 +33,8 @@ Find Rest Area with Voice Recognition
 * **PlanetxAndroidSDK**  
   https://github.com/skplanetx/planetx-android-sdk  
   Apache License 2.0  
+  
+* **Retrofit2**  
+  https://github.com/skplanetx/planetx-android-sdk  
+  Copyright 2013 Square, Inc.  
+  Apache License 2.0  
