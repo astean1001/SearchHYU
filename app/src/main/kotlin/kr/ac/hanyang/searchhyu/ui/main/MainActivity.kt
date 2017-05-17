@@ -12,10 +12,15 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kr.ac.hanyang.searchhyu.R
 import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
 import kr.ac.hanyang.searchhyu.ui.BaseActivity
+import java.util.*
 import javax.inject.Inject
 
 class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationItemSelectedListener,
         MainContract.View {
+
+    private val TAG = MainActivity::class.java.simpleName
+
+    private val REQ_CODE_SPEECH_INPUT = 1
 
     @Inject
     lateinit var presenter: MainContract.Presenter
@@ -78,6 +83,21 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
 
         return super.onOptionsItemSelected(item)
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != RESULT_OK)
+            return
+
+        Log.d(TAG, "onActivityResult")
+        val keyword = when (requestCode) {
+            REQ_CODE_SPEECH_INPUT -> {
+                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)
+            } else -> null
+        }
+
+        searchView.setSearchText(keyword)
+    }
     //endregion
 
     //region NavigationView.OnNavigationItemSelectedListener
@@ -136,6 +156,16 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
 
     private fun search(query: String) {
         ActivityUtils.searchTmap(this, query)
+    }
+
+    private fun speechInput() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speech_recognizer_prompt))
+
+        startActivityForResult(intent, REQ_CODE_SPEECH_INPUT)
     }
     //endregion
 }
