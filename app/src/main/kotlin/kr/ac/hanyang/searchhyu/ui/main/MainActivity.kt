@@ -1,5 +1,8 @@
 package kr.ac.hanyang.searchhyu.ui.main
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -9,18 +12,20 @@ import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kr.ac.hanyang.searchhyu.R
 import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
 import kr.ac.hanyang.searchhyu.ui.BaseActivity
-import java.util.*
 import javax.inject.Inject
 
 class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationItemSelectedListener,
         MainContract.View {
 
-    private val TAG = MainActivity::class.java.simpleName
+    override val context: Context
+        get() = this
 
-    private val REQ_CODE_SPEECH_INPUT = 1
+    @Suppress("unused")
+    private val TAG = MainActivity::class.java.simpleName
 
     @Inject
     lateinit var presenter: MainContract.Presenter
@@ -40,6 +45,7 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
         setContentView(R.layout.activity_main)
 
         component.inject(this)
+        presenter.bindView(this)
 
         init()
     }
@@ -73,7 +79,7 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // as you specify a parent context in AndroidManifest.xml.
         val id = item.itemId
 
 
@@ -86,17 +92,13 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != RESULT_OK)
-            return
+        presenter.speechInputResult(requestCode, resultCode, data)
+    }
 
-        Log.d(TAG, "onActivityResult")
-        val keyword = when (requestCode) {
-            REQ_CODE_SPEECH_INPUT -> {
-                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)
-            } else -> null
-        }
-
-        searchView.setSearchText(keyword)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+                                            grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        presenter.permissionsResult(requestCode, permissions, grantResults)
     }
     //endregion
 
@@ -128,14 +130,21 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
     override fun requiredNetwork() {
         ActivityUtils.showToast(this, R.string.required_network)
     }
+
+    override fun showSearchResult(result: String) {
+        searchView.setSearchText(result)
+    }
+
+    override fun showLocation(latitude: Double, longitude: Double) {
+        tMapView.setLocationPoint(longitude, latitude)
+    }
     //endregion
 
     //region Private methods
     private fun init() {
+
         fab.setOnClickListener {
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                    .setAction("Action", null).show()
-            ActivityUtils.moveToTmap(this)
+            presenter.speechInput()
         }
 
         searchView.attachNavigationDrawerToMenuButton(drawerLayout)
@@ -143,29 +152,21 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
 
         searchView.setOnSearchListener(object : FloatingSearchView.OnSearchListener {
             override fun onSearchAction(currentQuery: String?) {
-                search(currentQuery!!)
+                presenter.search(currentQuery!!)
             }
 
             override fun onSuggestionClicked(searchSuggestion: SearchSuggestion?) {}
         })
 
         searchView.setOnMenuItemClickListener {
-            search(searchView.query)
+            presenter.search(searchView.query)
         }
-    }
 
-    private fun search(query: String) {
-        ActivityUtils.searchTmap(this, query)
-    }
+        tMapView.setTrackingMode(true)
+        tMapView.setIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_location))
+        tMapView.setIconVisibility(true)
 
-    private fun speechInput() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.speech_recognizer_prompt))
-
-        startActivityForResult(intent, REQ_CODE_SPEECH_INPUT)
+        presenter.checkLocationPermission()
     }
     //endregion
 }

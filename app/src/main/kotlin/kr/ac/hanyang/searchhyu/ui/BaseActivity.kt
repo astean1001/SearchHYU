@@ -6,12 +6,14 @@ import kr.ac.hanyang.searchhyu.AppComponent
 import kr.ac.hanyang.searchhyu.MyApplication
 import kr.ac.hanyang.searchhyu.common.util.ComponentManager
 
-abstract class BaseActivity<C : Any> : AppCompatActivity() {
-    var appComponent: AppComponent? = null
-        private set
+abstract class BaseActivity<out C : Any> : AppCompatActivity() {
+    val appComponent: AppComponent
         get() = (application as MyApplication).appComponent
 
-    protected lateinit var component: C
+    private lateinit var _component: C
+
+    protected val component: C
+        get() = _component
 
     abstract fun createComponent(): C
 
@@ -27,14 +29,14 @@ abstract class BaseActivity<C : Any> : AppCompatActivity() {
 
     private fun initComponent(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            component = createComponent()
+            _component = createComponent()
         } else {
-            component = ComponentManager.restoreComponent<C>(savedInstanceState)?.let { it }
+            _component = ComponentManager.restoreComponent<C>(savedInstanceState)?.let { it }
                     ?: createComponent()
         }
     }
 
     private fun saveComponent(outState: Bundle) {
-        ComponentManager.saveComponent(component, outState)
+        ComponentManager.saveComponent(_component, outState)
     }
 }

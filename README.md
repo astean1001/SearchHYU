@@ -38,3 +38,9 @@ Find Rest Area with Voice Recognition
   https://github.com/skplanetx/planetx-android-sdk  
   Copyright 2013 Square, Inc.  
   Apache License 2.0  
+  
+* **SmartLocation**
+  https://github.com/mrmans0n/smart-location-lib  
+  Copyright (c) 2013-2016 Nacho Lopez  
+  MIT License  
+  
