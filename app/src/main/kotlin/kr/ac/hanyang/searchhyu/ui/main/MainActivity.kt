@@ -48,6 +48,8 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
         component.inject(this)
         presenter.bindView(this)
 
+        stopService(Intent(this, FloatingViewService::class.java))
+
         init()
     }
 
