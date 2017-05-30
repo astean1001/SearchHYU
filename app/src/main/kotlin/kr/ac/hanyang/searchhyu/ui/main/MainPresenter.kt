@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings
 import android.speech.RecognizerIntent
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -18,7 +20,10 @@ import javax.inject.Inject
 
 class MainPresenter @Inject constructor(val context: Context) : MainContract.Presenter {
     private val REQ_CODE_SPEECH_INPUT = 1
+
     private val REQ_PERMISSIONS_ACCESS_FINE_LOCATION = 2
+    private val REQ_PERMISSIONS_SYSTEM_ALERT_WINDOW = 3
+
 
     var view: MainContract.View? = null
 
@@ -58,19 +63,27 @@ class MainPresenter @Inject constructor(val context: Context) : MainContract.Pre
         }
     }
 
-    override fun speechInputResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != AppCompatActivity.RESULT_OK)
             return
 
-        val keyword = when (requestCode) {
+        when (requestCode) {
             REQ_CODE_SPEECH_INPUT -> {
-                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)
-            }
-            else -> null
-        }
+                val keyword = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)
 
-        keyword?.let {
-            view?.showSearchResult(it)
+                keyword?.let {
+                    view?.showSearchResult(it)
+                }
+            }
+
+            REQ_PERMISSIONS_SYSTEM_ALERT_WINDOW -> {
+                view?.context?.let {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                            && !Settings.canDrawOverlays(it)) {
+                        checkSystemAlertWindowPermission()
+                    }
+                }
+            }
         }
     }
 
@@ -104,6 +117,19 @@ class MainPresenter @Inject constructor(val context: Context) : MainContract.Pre
                             REQ_PERMISSIONS_ACCESS_FINE_LOCATION)
                 } else {
                     findLocation()
+                }
+            }
+        }
+    }
+
+    override fun checkSystemAlertWindowPermission() {
+        view?.context?.let {
+            if (it is Activity) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (!Settings.canDrawOverlays(it)) {
+                        it.startActivityForResult(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION),
+                                REQ_PERMISSIONS_SYSTEM_ALERT_WINDOW)
+                    }
                 }
             }
         }

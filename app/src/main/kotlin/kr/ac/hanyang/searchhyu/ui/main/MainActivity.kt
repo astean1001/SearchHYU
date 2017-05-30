@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kr.ac.hanyang.searchhyu.R
 import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
+import kr.ac.hanyang.searchhyu.service.FloatingViewService
 import kr.ac.hanyang.searchhyu.ui.BaseActivity
 import javax.inject.Inject
 
@@ -62,6 +63,11 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
         presenter.stop()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        startService(Intent(this, FloatingViewService::class.java))
+    }
+
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -92,7 +98,7 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        presenter.speechInputResult(requestCode, resultCode, data)
+        presenter.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
@@ -167,6 +173,7 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
         tMapView.setIconVisibility(true)
 
         presenter.checkLocationPermission()
+        presenter.checkSystemAlertWindowPermission()
     }
     //endregion
 }
