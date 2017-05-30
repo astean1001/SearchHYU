@@ -48,8 +48,6 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
         component.inject(this)
         presenter.bindView(this)
 
-        stopService(Intent(this, FloatingViewService::class.java))
-
         init()
     }
 
@@ -59,14 +57,15 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
         presenter.start()
     }
 
+    override fun onStart() {
+        super.onStart()
+        stopService(Intent(this, FloatingViewService::class.java))
+    }
+
     override fun onStop() {
         super.onStop()
         presenter.unbindView()
         presenter.stop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
         startService(Intent(this, FloatingViewService::class.java))
     }
 
