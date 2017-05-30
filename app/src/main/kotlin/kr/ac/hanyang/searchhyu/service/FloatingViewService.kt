@@ -12,8 +12,13 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import kr.ac.hanyang.searchhyu.R
+import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
+import kr.ac.hanyang.searchhyu.ui.main.MainActivity
 
 class FloatingViewService : Service(), View.OnTouchListener {
+
+    @Suppress("unused")
+    private val TAG = FloatingViewService::class.java.simpleName
 
     private lateinit var windowManager: WindowManager
     private lateinit var floatingView: View
@@ -24,6 +29,8 @@ class FloatingViewService : Service(), View.OnTouchListener {
 
     private var initialTouchX = 0f
     private var initialTouchY = 0f
+
+    private var dragging = false
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -69,11 +76,24 @@ class FloatingViewService : Service(), View.OnTouchListener {
             }
 
             MotionEvent.ACTION_MOVE -> {
+                dragging = true
+
                 params.x = initialX + (event.rawX - initialTouchX).toInt()
                 params.y = initialY + (event.rawY - initialTouchY).toInt()
 
                 windowManager.updateViewLayout(floatingView, params)
                 return true
+            }
+
+            MotionEvent.ACTION_UP -> {
+                if (!dragging) {
+                    val intent = Intent(this, ServiceActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
+                    return true
+                } else {
+                    dragging = false
+                }
             }
         }
 

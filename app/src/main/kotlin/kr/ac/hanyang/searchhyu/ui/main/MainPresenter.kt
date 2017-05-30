@@ -10,12 +10,10 @@ import android.provider.Settings
 import android.speech.RecognizerIntent
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import io.nlopez.smartlocation.SmartLocation
-import kr.ac.hanyang.searchhyu.R
+import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
 import kr.ac.hanyang.searchhyu.common.util.NetworkUtils
 import kr.ac.hanyang.searchhyu.common.util.TmapUtils
-import java.util.*
 import javax.inject.Inject
 
 class MainPresenter @Inject constructor(val context: Context) : MainContract.Presenter {
@@ -51,20 +49,14 @@ class MainPresenter @Inject constructor(val context: Context) : MainContract.Pre
 
     override fun speechInput() {
         view?.context?.let {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, it.getString(R.string.speech_recognizer_prompt))
-
             if (it is Activity) {
-                it.startActivityForResult(intent, REQ_CODE_SPEECH_INPUT)
+                ActivityUtils.startSpeechInputActivity(it, REQ_CODE_SPEECH_INPUT)
             }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != AppCompatActivity.RESULT_OK)
+        if (resultCode != Activity.RESULT_OK)
             return
 
         when (requestCode) {

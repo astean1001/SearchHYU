@@ -30,6 +30,10 @@
         </activity>
 
         <service android:name=".service.FloatingViewService" />
+        <activity
+            android:name=".service.ServiceActivity"
+            android:theme="@style/AppTheme.Transparent" />
+
     </application>
 
 </manifest>
