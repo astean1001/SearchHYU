@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kr.ac.hanyang.searchhyu.R
 import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
+import kr.ac.hanyang.searchhyu.common.util.NotificationUtils
 import kr.ac.hanyang.searchhyu.service.FloatingViewService
 import kr.ac.hanyang.searchhyu.ui.BaseActivity
 import javax.inject.Inject
@@ -59,6 +60,7 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
 
     override fun onStart() {
         super.onStart()
+        NotificationUtils.cancelNotification(this, FloatingViewService.NOTIFICATION_ID)
         stopService(Intent(this, FloatingViewService::class.java))
     }
 

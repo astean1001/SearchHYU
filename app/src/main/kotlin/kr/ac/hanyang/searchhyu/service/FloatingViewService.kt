@@ -1,21 +1,26 @@
 package kr.ac.hanyang.searchhyu.service
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.IBinder
+import android.support.v7.app.NotificationCompat
 import android.support.v7.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import kr.ac.hanyang.searchhyu.R
-import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
-import kr.ac.hanyang.searchhyu.ui.main.MainActivity
 
 class FloatingViewService : Service(), View.OnTouchListener {
+
+    companion object {
+        const val NOTIFICATION_ID = 431
+    }
 
     @Suppress("unused")
     private val TAG = FloatingViewService::class.java.simpleName
@@ -32,6 +37,7 @@ class FloatingViewService : Service(), View.OnTouchListener {
 
     private var dragging = false
 
+    //region Service
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -57,13 +63,17 @@ class FloatingViewService : Service(), View.OnTouchListener {
 
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.addView(floatingView, params)
+
+        setNotification()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         windowManager.removeView(floatingView)
     }
+    //endregion
 
+    //region View.OnTouchListener
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -99,4 +109,23 @@ class FloatingViewService : Service(), View.OnTouchListener {
 
         return false
     }
+    //endregion
+
+    //region Private methods
+    private fun setNotification() {
+        val builder = NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.notification_exit))
+                .setOngoing(true)
+
+        val notificationMgr = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val intent = Intent(this, ExitService::class.java)
+        val pendingIntent = PendingIntent.getService(this, 0, intent, 0)
+
+        builder.setContentIntent(pendingIntent)
+
+        notificationMgr.notify(NOTIFICATION_ID, builder.build())
+    }
+    //endregion
 }

@@ -2,7 +2,6 @@ package kr.ac.hanyang.searchhyu.service
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.support.v7.app.AppCompatActivity
@@ -33,6 +32,11 @@ class ServiceActivity : AppCompatActivity() {
         }
 
         Log.d(TAG, "keyword: $keyword")
+
+        keyword?.let {
+
+        }
+
         finish()
     }
 }

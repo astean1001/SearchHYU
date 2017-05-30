@@ -30,6 +30,7 @@
         </activity>
 
         <service android:name=".service.FloatingViewService" />
+        <service android:name=".service.ExitService" />
         <activity
             android:name=".service.ServiceActivity"
             android:theme="@style/AppTheme.Transparent" />

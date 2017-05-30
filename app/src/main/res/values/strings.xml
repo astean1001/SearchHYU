@@ -19,4 +19,7 @@
 
     <!-- speech recognizer message -->
     <string name="speech_recognizer_prompt">검색어를 말하세요</string>
+
+    <!-- notification message -->
+    <string name="notification_exit">실행중... 종료하려면 클릭하세요</string>
 </resources>
