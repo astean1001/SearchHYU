@@ -15,6 +15,8 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import kr.ac.hanyang.searchhyu.R
+import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
+import kr.ac.hanyang.searchhyu.common.util.NetworkUtils
 
 class FloatingViewService : Service(), View.OnTouchListener {
 
@@ -97,9 +99,13 @@ class FloatingViewService : Service(), View.OnTouchListener {
 
             MotionEvent.ACTION_UP -> {
                 if (!dragging) {
-                    val intent = Intent(this, ServiceActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
+                    if (NetworkUtils.isConnected(this)) {
+                        val intent = Intent(this, ServiceActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                    } else {
+                        ActivityUtils.showToast(this, R.string.required_network)
+                    }
                     return true
                 } else {
                     dragging = false
