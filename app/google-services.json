@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "248719535211",
+    "firebase_url": "https://searchhyu.firebaseio.com",
+    "project_id": "searchhyu",
+    "storage_bucket": "searchhyu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:248719535211:android:eca173a04654f4ce",
+        "android_client_info": {
+          "package_name": "kr.ac.hanyang.searchhyu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "248719535211-2r8ge7tua90rnksp08igpla7a35d91c9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbFgGIVxcPJY4dfHk403H2Vsa9FXV-18g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
