@@ -57,6 +57,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // Android
+    //noinspection GradleCompatible
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -86,7 +87,12 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.1'
 
     // SmartLocation
-    compile 'io.nlopez.smartlocation:library:3.3.1'
+    compile ('io.nlopez.smartlocation:library:3.3.1') {
+        transitive = false
+    }
+
+    //noinspection UseOfBundledGooglePlayServices
+    compile 'com.google.android.gms:play-services:10.2.6'
 
     // Firebase
     compile 'com.google.firebase:firebase-core:10.0.1'
