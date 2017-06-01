@@ -80,6 +80,9 @@ dependencies {
     // Guava
     compile 'com.google.guava:guava:20.0'
 
+    // Picasso
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
     // Retrofit2
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
