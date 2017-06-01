@@ -70,7 +70,10 @@ class MainPresenter @Inject constructor(val context: Context) : MainContract.Pre
                 if(data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0) == null)
                     return
                 findLocation()
-                ParseUtils.parseKeywords(data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)!!,currentLat,currentLng, context)
+
+                view?.context?.let {
+                    ParseUtils.parseKeywords(data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)!!, currentLat, currentLng, it)
+                }
             }
 
             REQ_PERMISSIONS_SYSTEM_ALERT_WINDOW -> {
