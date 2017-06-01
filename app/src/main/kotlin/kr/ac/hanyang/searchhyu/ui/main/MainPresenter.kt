@@ -13,8 +13,10 @@ import android.support.v4.content.ContextCompat
 import io.nlopez.smartlocation.SmartLocation
 import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
 import kr.ac.hanyang.searchhyu.common.util.NetworkUtils
+import kr.ac.hanyang.searchhyu.common.util.ParseUtils
 import kr.ac.hanyang.searchhyu.common.util.TmapUtils
 import javax.inject.Inject
+
 
 class MainPresenter @Inject constructor(val context: Context) : MainContract.Presenter {
     private val REQ_CODE_SPEECH_INPUT = 1
@@ -22,6 +24,9 @@ class MainPresenter @Inject constructor(val context: Context) : MainContract.Pre
     private val REQ_PERMISSIONS_ACCESS_FINE_LOCATION = 2
     private val REQ_PERMISSIONS_SYSTEM_ALERT_WINDOW = 3
 
+
+    private var currentLat: Double = .0
+    private var currentLng: Double = .0
 
     var view: MainContract.View? = null
 
@@ -61,11 +66,11 @@ class MainPresenter @Inject constructor(val context: Context) : MainContract.Pre
 
         when (requestCode) {
             REQ_CODE_SPEECH_INPUT -> {
-                val keyword = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)
 
-                keyword?.let {
-                    view?.showSearchResult(it)
-                }
+                if(data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0) == null)
+                    return
+                findLocation()
+                ParseUtils.parseKeywords(data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)!!,currentLat,currentLng, context)
             }
 
             REQ_PERMISSIONS_SYSTEM_ALERT_WINDOW -> {
@@ -91,10 +96,14 @@ class MainPresenter @Inject constructor(val context: Context) : MainContract.Pre
 
             locationControl.lastLocation?.let {
                 view?.showLocation(it.latitude, it.longitude)
+                currentLat = it.latitude
+                currentLng = it.longitude
             }
 
             locationControl.oneFix().start {
                 view?.showLocation(it.latitude, it.longitude)
+                currentLat = it.latitude
+                currentLng = it.longitude
             }
         }
     }
