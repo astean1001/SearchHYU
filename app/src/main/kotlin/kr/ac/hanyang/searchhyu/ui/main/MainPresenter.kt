@@ -12,13 +12,18 @@ import android.support.v7.app.AppCompatActivity
 import io.nlopez.smartlocation.SmartLocation
 import kr.ac.hanyang.searchhyu.R
 import kr.ac.hanyang.searchhyu.common.util.NetworkUtils
+import kr.ac.hanyang.searchhyu.common.util.ParseUtils
 import kr.ac.hanyang.searchhyu.common.util.TmapUtils
 import java.util.*
 import javax.inject.Inject
 
+
 class MainPresenter @Inject constructor(val context: Context) : MainContract.Presenter {
     private val REQ_CODE_SPEECH_INPUT = 1
     private val REQ_PERMISSIONS_ACCESS_FINE_LOCATION = 2
+
+    private var currentLat: Double = .0
+    private var currentLng: Double = .0
 
     var view: MainContract.View? = null
 
@@ -64,7 +69,10 @@ class MainPresenter @Inject constructor(val context: Context) : MainContract.Pre
 
         val keyword = when (requestCode) {
             REQ_CODE_SPEECH_INPUT -> {
-                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)
+                if(data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0) == null)
+                    return
+                findLocation()
+                ParseUtils.parseKeywords(data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)!!,currentLat,currentLng, context)
             }
             else -> null
         }
@@ -86,10 +94,14 @@ class MainPresenter @Inject constructor(val context: Context) : MainContract.Pre
 
             locationControl.lastLocation?.let {
                 view?.showLocation(it.latitude, it.longitude)
+                currentLat = it.latitude
+                currentLng = it.longitude
             }
 
             locationControl.oneFix().start {
                 view?.showLocation(it.latitude, it.longitude)
+                currentLat = it.latitude
+                currentLng = it.longitude
             }
         }
     }
