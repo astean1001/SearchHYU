@@ -160,7 +160,7 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
             presenter.speechInput()
         }
 
-        searchView.attachNavigationDrawerToMenuButton(drawerLayout)
+//        searchView.attachNavigationDrawerToMenuButton(drawerLayout)
         navView.setNavigationItemSelectedListener(this)
 
         searchView.setOnSearchListener(object : FloatingSearchView.OnSearchListener {

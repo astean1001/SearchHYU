@@ -15,10 +15,16 @@ import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
 import kr.ac.hanyang.searchhyu.common.util.NetworkUtils
 import kr.ac.hanyang.searchhyu.common.util.ParseUtils
 import kr.ac.hanyang.searchhyu.common.util.TmapUtils
+import kr.ac.hanyang.searchhyu.domain.usecase.GetPois
+import kr.ac.hanyang.searchhyu.domain.usecase.GetPois2
 import javax.inject.Inject
 
 
-class MainPresenter @Inject constructor(val context: Context) : MainContract.Presenter {
+class MainPresenter @Inject constructor(
+        val context: Context,
+        val getPoisUseCase: GetPois,
+        val getPoisUseCase2: GetPois2) : MainContract.Presenter {
+
     private val REQ_CODE_SPEECH_INPUT = 1
 
     private val REQ_PERMISSIONS_ACCESS_FINE_LOCATION = 2
@@ -72,7 +78,9 @@ class MainPresenter @Inject constructor(val context: Context) : MainContract.Pre
                 findLocation()
 
                 view?.context?.let {
-                    ParseUtils.parseKeywords(data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0)!!, currentLat, currentLng, it)
+                    ParseUtils.parseKeywords(data?.getStringArrayListExtra(
+                            RecognizerIntent.EXTRA_RESULTS)?.get(0)!!, currentLat, currentLng,
+                            it, getPoisUseCase, getPoisUseCase2)
                 }
             }
 

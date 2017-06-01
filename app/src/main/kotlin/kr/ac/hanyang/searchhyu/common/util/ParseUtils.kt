@@ -7,8 +7,11 @@ import android.util.Log
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import io.reactivex.functions.Consumer
 import kr.ac.hanyang.searchhyu.common.util.ActivityUtils.showToast
 import kr.ac.hanyang.searchhyu.common.util.TmapUtils.routeTmap
+import kr.ac.hanyang.searchhyu.domain.usecase.GetPois
+import kr.ac.hanyang.searchhyu.domain.usecase.GetPois2
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -20,11 +23,32 @@ object ParseUtils {
 
     private val TAG = ParseUtils::class.java.simpleName
 
+    private lateinit var getPoisUseCase: GetPois
+    private lateinit var getPoisUseCase2: GetPois2
+
     private fun runOnUiThread(c: Context, body: () -> Unit) {
         if (c is Activity) {
             Log.d(TAG, "runOnUiThread")
             c.runOnUiThread { body() }
         }
+    }
+
+    private fun find(context: Context, startX: Double, startY: Double) {
+        Log.d(TAG, "find")
+        val p = GetPois2.Companion.Params("고속도로 휴게소", startX, startY)
+        getPoisUseCase2.execute(p, Consumer {
+            Log.d(TAG, "TMap2 success")
+            val name = it.searchPoiInfo.pois.poi[0].name
+            val lat = it.searchPoiInfo.pois.poi[0].frontLat
+            val lng = it.searchPoiInfo.pois.poi[0].frontLon
+            Log.d(TAG, "name: $name, lat: $lat, lng: $lng")
+            TmapUtils.routeTmap(context, startX, startY, lng, lat)
+            getPoisUseCase2.clear()
+        }, Consumer {
+            Log.d(TAG, "Tmap failed2")
+            Log.e(TAG, "fail2 fail2", it)
+            getPoisUseCase2.clear()
+        })
     }
 
     private fun parseInternal(inputStr: String, curX: Double, curY: Double, context: Context) {
@@ -122,11 +146,41 @@ object ParseUtils {
             val key = callKeywordAPI(inputStr)
             if (key == "ERROR") {
                 // TMAP 검색 결과 ("고속도로 휴게소") 중에서 첫번째 인덱스를 반환하면 됨
+                val params = GetPois.Companion.Params("고속도로 휴게소", curY, curX)
+                getPoisUseCase.execute(params, Consumer {
+                    Log.d(TAG, "TMap success")
+                    val name = it.searchPoiInfo.pois.poi[0].name
+                    val lat = it.searchPoiInfo.pois.poi[0].frontLat
+                    val lng = it.searchPoiInfo.pois.poi[0].frontLon
+                    Log.d(TAG, "name: $name, lat: $lat, lng: $lng")
+                    runOnUiThread(context) { TmapUtils.routeTmap(context, curX, curY, lng, lat) }
+                    getPoisUseCase.clear()
+                }, Consumer {
+                    Log.d(TAG, "Tmap failed")
+                    Log.e(TAG, "fail fail", it)
+                    getPoisUseCase.clear()
+                })
             } else {
                 val keyword = callKeywordAPI(inputStr)
                 // TMap에서 key를 검색한 첫번째 인덱스를 시작점으로 잡고 "고속도로 휴게소를 검색하여 나온 첫번째 인덱스 반환
+                val params = GetPois.Companion.Params(keyword, curY, curX)
+                getPoisUseCase.execute(params, Consumer {
+                    Log.d(TAG, "TMaps success")
+                    val name = it.searchPoiInfo.pois.poi[0].name
+                    val startLat = it.searchPoiInfo.pois.poi[0].frontLat
+                    val startLng = it.searchPoiInfo.pois.poi[0].frontLon
+                    Log.d(TAG, "name: $name, lat: $startLat, lng: $startLng")
+                    Log.d(TAG, "thread: ${Thread.currentThread().name}")
+
+                    find(context, startLng, startLat)
+
+                    getPoisUseCase.clear()
+                }, Consumer {
+                    Log.d(TAG, "Tmap failed")
+                    Log.e(TAG, "fail fail", it)
+                    getPoisUseCase.clear()
+                })
             }
-            noResult(context)
             return
         }
 
@@ -160,7 +214,11 @@ object ParseUtils {
         return
     }
 
-    fun parseKeywords(inputStr: String, curX: Double, curY: Double, context: Context) {
+    fun parseKeywords(inputStr: String, curX: Double, curY: Double, context: Context,
+                      getPoisUseCase: GetPois, getPoisUseCase2: GetPois2) {
+        this.getPoisUseCase = getPoisUseCase
+        this.getPoisUseCase2 = getPoisUseCase2
+
         Thread {
             parseInternal(inputStr, curX, curY, context)
         }.start()

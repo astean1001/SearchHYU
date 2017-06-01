@@ -14,7 +14,7 @@ class MyApplication : Application() {
         appComponent = DaggerAppComponent
                 .builder()
                 .appModule(AppModule(this))
-                .apiModule(ApiModule("http://data.ex.co.kr/openapi/restinfo/"))
+                .apiModule(ApiModule("https://apis.skplanetx.com/tmap/"))
                 .build()
 
         TMapTapi(this).setSKPMapAuthentication(getString(R.string.app_key))
