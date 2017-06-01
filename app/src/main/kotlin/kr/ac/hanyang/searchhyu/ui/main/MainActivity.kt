@@ -2,7 +2,8 @@ package kr.ac.hanyang.searchhyu.ui.main
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -10,11 +11,14 @@ import android.view.Menu
 import android.view.MenuItem
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kr.ac.hanyang.searchhyu.R
 import kr.ac.hanyang.searchhyu.common.util.ActivityUtils
+import kr.ac.hanyang.searchhyu.common.util.ImageUtils
 import kr.ac.hanyang.searchhyu.common.util.NotificationUtils
 import kr.ac.hanyang.searchhyu.service.FloatingViewService
 import kr.ac.hanyang.searchhyu.ui.BaseActivity
@@ -172,7 +176,18 @@ class MainActivity : BaseActivity<MainComponent>(), NavigationView.OnNavigationI
         }
 
         tMapView.setTrackingMode(true)
-        tMapView.setIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_location))
+        ImageUtils.setTarget(this,
+                ImageUtils.PIN_ICON_URL,
+                object : Target {
+                    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+
+                    override fun onBitmapFailed(errorDrawable: Drawable?) {}
+
+                    override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                        tMapView.setIcon(bitmap)
+                    }
+                })
+
         tMapView.setIconVisibility(true)
 
         presenter.checkLocationPermission()
